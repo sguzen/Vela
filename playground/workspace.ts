@@ -9,6 +9,8 @@
 import type { Vela } from "../src";
 import { VelaWorkspace } from "../src/workspace";
 import { BinanceProvider } from "../src/data/providers/binance";
+import { CoinbaseProvider } from "../src/data/providers/coinbase";
+import { MyFundedPerpsProvider } from "../src/data/providers/myfundedperps";
 import { DemoEngine } from "./demo-engine";
 import { playgroundStorage } from "./persistence";
 import { addSampleMarks } from "./marks";
@@ -27,7 +29,12 @@ const ws = new VelaWorkspace("#workspace", {
     sol: { symbol: "SOLUSDT", timeframe: "240" },
     bnb: { symbol: "BNBUSDT", timeframe: "D" },
   },
-  providers: { binance: () => new BinanceProvider() },
+  // Every bundled provider, so the order-flow views have a tape to read on any cell.
+  providers: {
+    binance: () => new BinanceProvider(),
+    coinbase: () => new CoinbaseProvider(),
+    mfp: () => new MyFundedPerpsProvider(),
+  },
   engines: { demo: () => new DemoEngine() }, // ONE instance per cell (a worker engine would get a thread each)
   defaultLanguage: "demo", // scripts added without a `language` run on the engine above
   // No script manifest: the indicators dialog lists the built-in catalog only.

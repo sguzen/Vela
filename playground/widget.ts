@@ -16,6 +16,8 @@
 // …which is exactly what the addon's own playground does (repos/Vela-pinets, port 5192).
 import { VelaWorkspace } from '../src/workspace';
 import { BinanceProvider } from '../src/data/providers/binance';
+import { CoinbaseProvider } from '../src/data/providers/coinbase';
+import { MyFundedPerpsProvider } from '../src/data/providers/myfundedperps';
 import { addSampleMarks } from './marks';
 import { DemoEngine, DEMO_SCRIPTS } from './demo-engine';
 import { playgroundStorage } from './persistence';
@@ -28,14 +30,21 @@ const storage = playgroundStorage();
 
 const ws = new VelaWorkspace('#chart', {
     layout: false, // SINGLE-CHART mode: one cell, no layout picker, no sync switches
-    symbol: 'BTCUSDT', // bare = first declared provider (binance); 'coinbase:BTC-USD' pins a venue
+    symbol: 'BTCUSDT', // bare = first declared provider (binance); 'coinbase:BTC-USD' or 'mfp:BTC' pins a venue
     timeframe: '60',
     live: true,
     theme: 'dark',
     autofocus: true, // the chart IS the page — shortcuts work from the first keystroke
     persist: 'vela-widget', // → 'vela-play:vela-widget' in devtools (the page's historical key)
     storage,
-    providers: { binance: () => new BinanceProvider() },
+    // Every bundled provider, so the ORDER-FLOW views (the Footprint price style, Delta and
+    // Cumulative Volume Delta) have a tape to read. Depth differs by venue: Binance serves
+    // full trade history, Coinbase a recent window, MyFundedPerps a live tape only.
+    providers: {
+        binance: () => new BinanceProvider(),
+        coinbase: () => new CoinbaseProvider(),
+        mfp: () => new MyFundedPerpsProvider(),
+    },
     engines: { demo: () => new DemoEngine() }, // swap for `pine: () => new PineWorkerEngine()` (see the header)
     defaultLanguage: 'demo', // scripts added without a `language` run on the engine above
     // No script manifest: the indicators dialog lists the built-in catalog only. Scripts
