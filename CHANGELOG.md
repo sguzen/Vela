@@ -6,6 +6,14 @@ All notable changes to Vela, newest first.
 
 ### Added
 
+- **MyFundedPerps market data.** A new provider reads that venue's public market stream, with
+  no account or key: `@luxalgo/vela/providers/myfundedperps`. One connection covers several
+  exchanges at once and reaches beyond crypto into equities, FX and commodities, so `AAPL` and
+  `BRENTOIL` chart the same way `BTC` does. Symbols are the plain display names, with a
+  `.venue` suffix when one name trades in more than one place. It also streams a live tape, so
+  the order-flow views work on it from the moment you open them — the venue serves no past
+  trades, so earlier bars stay empty there.
+
 - **Footprint charts.** A new price style draws each bar as the trades inside it: one row per
   price, split into what buyers paid up for and what sellers hit, so you can see where a move
   was actually filled rather than only where it opened and closed. Rows shade by how much

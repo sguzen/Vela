@@ -136,6 +136,23 @@ chart.data.registerProvider('hyperliquid', new HyperliquidProvider());
 
 Because Hyperliquid coins are bare, a bare `BTC` won't collide with Binance's `BTCUSDT`; register both and each symbol routes to the venue that indexes it (or name one explicitly with a `BINANCE:` / `HYPERLIQUID:` prefix).
 
+## The bundled MyFundedPerps provider
+
+`@luxalgo/vela/providers/myfundedperps` reads the public [MyFundedPerps](https://myfundedperpetuals.com) market stream (no third-party SDK, no API key). It is a **market-data provider only** — it reads prices and nothing else — and it is unusual among the bundled providers in having no REST history path: candles, trades and the forming candle all travel over **one WebSocket**, so history is a request on that same socket.
+
+One connection covers several execution venues at once (Binance, Bybit, Hyperliquid and the venue's own synthetic books) and spans crypto, **equities**, FX and commodities. A ticker is the market's display symbol — `BTC`, `AAPL`, `BRENTOIL` — with an optional `.venue` suffix (`BTC.bybit`) when one symbol trades on more than one of them.
+
+```js
+import { MyFundedPerpsProvider } from '@luxalgo/vela/providers/myfundedperps';
+chart.data.registerProvider('mfp', new MyFundedPerpsProvider());
+// new Vela('#chart', { symbol: 'mfp:BTC', timeframe: '1' })
+// or 'mfp:AAPL', 'mfp:BTC.bybit', …
+```
+
+> **The tape is live-only** (`tradeDepth` reports `'none'`). The stream carries every print with its aggressor side, but the venue offers no seekable trade history, so an order-flow view here builds up from the moment it opens and leaves earlier bars empty.
+
+Timeframes the venue doesn't serve natively (`45`, `180`, `360`) are folded from the largest one that divides them, and the socket re-establishes its subscriptions across a reconnect and across the server's own connection handover, so a long-running chart keeps streaming without the host doing anything.
+
 ## Bringing your own provider
 
 Implement the `DataProvider` interface and register it under any name — see [Adding a data provider](../contributing/adding-a-data-provider.md). The only required method is `getBars`; everything else (`listSymbols`, `getSymbolInfo`, `info`, `subscribe`, `resolveSymbolIcon`) is a progressive enhancement. Symbol icons are the provider's call too: `resolveSymbolIcon(descriptor)` returns the icon URL the shells render in the symbol search, the status line and the object tree (the bundled crypto providers predefine a crypto-icon CDN; no resolver, or no URL, means a colored-initials badge — nothing breaks).
