@@ -26,6 +26,9 @@ import { MultiProviderFeed } from './data/MultiProviderFeed';
 import { registerBuiltinChartTypes } from './chart-types/builtins';
 import { registerVolume } from './core/native-indicators/volume';
 import { registerVpvr } from './core/native-indicators/vpvr';
+import { registerCvd, registerDelta } from './core/native-indicators/orderflow';
+import { registerFootprintChartType } from './chart-types/footprint';
+import { registerFootprintLayer } from './renderers/native/footprint/FootprintLayer';
 import { registerClassicIndicators } from './core/native-indicators/classics';
 
 const asError = (err: unknown): Error => (err instanceof Error ? err : new Error(String(err)));
@@ -70,8 +73,12 @@ export class Vela {
 
     constructor(container: HTMLElement | string, options: VelaOptions = {}, deps: VelaDeps = {}) {
         registerBuiltinChartTypes(); // built-in chart types through the public SDK registry (idempotent)
+        registerFootprintChartType(); // the footprint style + its renderer layer (both public seams)
+        registerFootprintLayer();
         registerVolume(); // register the built-in native indicators (idempotent)
         registerVpvr();
+        registerDelta();
+        registerCvd();
         registerClassicIndicators();
         const element = resolveElement(container);
         const theme = resolveTheme(options.theme);

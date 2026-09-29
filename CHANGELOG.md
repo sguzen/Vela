@@ -2,6 +2,57 @@
 
 All notable changes to Vela, newest first.
 
+## [Unreleased]
+
+### Added
+
+- **MyFundedPerps market data.** A new provider reads that venue's public market stream, with
+  no account or key: `@luxalgo/vela/providers/myfundedperps`. One connection covers several
+  exchanges at once and reaches beyond crypto into equities, FX and commodities, so `AAPL` and
+  `BRENTOIL` chart the same way `BTC` does. Symbols are the plain display names, with a
+  `.venue` suffix when one name trades in more than one place. It also streams a live tape, so
+  the order-flow views work on it from the moment you open them — the venue serves no past
+  trades, so earlier bars stay empty there.
+
+- **Footprint charts.** A new price style draws each bar as the trades inside it: one row per
+  price, split into what buyers paid up for and what sellers hit, so you can see where a move
+  was actually filled rather than only where it opened and closed. Rows shade by how much
+  traded, the heaviest row of each bar is marked as its point of control, and rows where one
+  side overwhelmed the other by your chosen ratio are outlined as imbalances. Show the rows
+  as bid against ask, as delta, or as plain volume, and put each bar's total underneath.
+  Numbers appear as soon as the bars are wide enough to hold them and step aside when they
+  are not, so a zoomed-out chart stays readable instead of filling with overlapping text.
+  Row height follows the instrument's own price increment; set Ticks per row in the
+  Footprint settings tab to group several increments into one.
+
+- **Delta and cumulative delta.** Two new indicators read the tape rather than the candles.
+  **Delta** shows, per bar, how much was bought by takers minus how much was sold — the
+  disagreement a candle hides, when a bar closes up on selling or down on buying.
+  **Cumulative Volume Delta** keeps the running total and draws it as candles, so it reads
+  the way price does; its wicks come from the path the delta took inside the bar, so a push
+  that was absorbed and reversed before the close still shows. Reset the total each day,
+  week or month, or let it run. Both appear in the indicator list only on markets whose
+  venue serves trade data, both say in the legend while they are still filling in, and a
+  cumulative total is only drawn across bars whose trades were actually read — never summed
+  over a window that failed to load.
+
+- **Order-flow data.** A chart can now read the tape — the individual trades behind each
+  bar, each carrying the side that initiated it — instead of only the candles built from
+  them. `chart.data.trades()` returns a past window, `chart.data.subscribeTrades()`
+  follows the live prints, and `chart.data.tradeDepth()` says up front how far back a
+  venue's trades reach, so a view knows whether it can rebuild history or only follow
+  along from now on. Each bundled provider serves what its venue allows: Binance walks
+  any past window, Coinbase only a recent one, and Hyperliquid streams live trades
+  without offering history. This is what the order-flow views read, and a provider of
+  your own joins in by adding the same two methods.
+
+### Fixed
+
+- **Live streams behind a restrictive proxy.** The Binance streams asked for a non-default
+  port, which some corporate and cloud networks refuse to open. They now use the standard
+  one, so a chart that had been falling back to polling — or showing nothing live at all —
+  streams normally.
+
 ## [0.8.0]
 
 ### Added

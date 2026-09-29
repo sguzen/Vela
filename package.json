@@ -56,6 +56,11 @@
       "import": "./dist/providers/coinbase.js",
       "require": "./dist/providers/coinbase.cjs"
     },
+    "./providers/myfundedperps": {
+      "types": "./dist/providers/myfundedperps.d.ts",
+      "import": "./dist/providers/myfundedperps.js",
+      "require": "./dist/providers/myfundedperps.cjs"
+    },
     "./plugin": {
       "types": "./dist/plugin.d.ts",
       "import": "./dist/plugin.js",
