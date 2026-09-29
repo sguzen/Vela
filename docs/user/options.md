@@ -64,7 +64,7 @@ chart.data.registerProvider('binance', new BinanceProvider());
 | `glow` | number | `0` | Neon glow/bloom for line series (~0.6 = strong). **WebGL2 only** — ignored on canvas2d. |
 | `upColor` | string | `#089981` (green) | Bullish candle color (native renderer). |
 | `downColor` | string | `#f23645` (red) | Bearish candle color (native renderer). |
-| `priceStyle` | `'candles' \| 'bars' \| 'line' \| 'area' \| 'baseline'` | `'candles'` | How the base price series is drawn (native renderer). |
+| `priceStyle` | `'candles' \| 'bars' \| 'line' \| 'area' \| 'baseline' \| 'heikinashi' \| 'footprint'` | `'candles'` | How the base price series is drawn (native renderer). `'footprint'` draws each bar's trades as price rows split by aggressor — it needs a provider that serves [trade data](./data-providers.md), and its own settings tab sets the row height, the display mode and the highlights. Plugins can register more styles. |
 | `drawings` | `boolean \| { toolbar?, tools?, groups? }` | **toolbar shown** | Interactive [drawing tools](./drawing-tools.md). `true`/omitted ⇒ toolbar visible; `false` ⇒ toolbar hidden (the `chart.drawings` API still works headlessly); object customizes it (see below). Capability-gated (native renderer only). |
 | `settings` | `{ hidden?: string[] }` | **all visible** | Chart-settings dialog visibility policy: setting ids to hide — a whole tab, a group, or a single row (see below). |
 
@@ -324,7 +324,7 @@ A native-renderer styling combo: draw price as a glowing line on the GPU backend
 ```js
 new Vela('#chart', {
   data: bars,
-  priceStyle: 'line',                 // candles | bars | line | area | baseline
+  priceStyle: 'line',                 // candles | bars | line | area | baseline | heikinashi | footprint
   nativeBackend: 'webgl2',            // force the GPU backend
   glow: 0.6,                          // neon bloom on line series (WebGL2 only)
   animations: { zoom: true, pan: false }, // eased zoom, no pan momentum

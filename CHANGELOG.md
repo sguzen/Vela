@@ -6,6 +6,17 @@ All notable changes to Vela, newest first.
 
 ### Added
 
+- **Footprint charts.** A new price style draws each bar as the trades inside it: one row per
+  price, split into what buyers paid up for and what sellers hit, so you can see where a move
+  was actually filled rather than only where it opened and closed. Rows shade by how much
+  traded, the heaviest row of each bar is marked as its point of control, and rows where one
+  side overwhelmed the other by your chosen ratio are outlined as imbalances. Show the rows
+  as bid against ask, as delta, or as plain volume, and put each bar's total underneath.
+  Numbers appear as soon as the bars are wide enough to hold them and step aside when they
+  are not, so a zoomed-out chart stays readable instead of filling with overlapping text.
+  Row height follows the instrument's own price increment; set Ticks per row in the
+  Footprint settings tab to group several increments into one.
+
 - **Delta and cumulative delta.** Two new indicators read the tape rather than the candles.
   **Delta** shows, per bar, how much was bought by takers minus how much was sold — the
   disagreement a candle hides, when a bar closes up on selling or down on buying.
